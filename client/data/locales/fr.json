@@ -1,0 +1,23 @@
+{
+  "FULL_SCREEN": "Plein écran",
+  "DRAW_CALLS": "Appels de rendu",
+  "ARROW_KEYS": "Flèches",
+  "MOVE": "Se déplacer",
+  "SPACE_KEY": "Espace",
+  "ATTACK": "Attaquer",
+  "ALIAS": "Alias",
+  "SERVER": "Serveur",
+  "PLAY": "Jouer",
+  "EMPTY_ALIAS": "Le nom du joueur ne peut pas être vide",
+  "EMPTY_SERVER": "L'adresse du serveur ne peut pas être vide",
+
+  "player0": "sprites/green_player_fr.png",
+  "player1": "sprites/red_player_fr.png",
+  "wait": "sprites/wait_fr.png",
+  "countdown_1": "sprites/countdown_step1_fr.png",
+  "countdown_2": "sprites/countdown_step2_fr.png",
+  "countdown_3": "sprites/countdown_step3_fr.png",
+  "greenPlayer": "Joueur Vert",
+  "redPlayer": "Joueur Rouge",
+  "winMessage": "Bravo, {WINNER}! Tu as battu {LOSER}!"
+}

@@ -1,0 +1,12 @@
+{
+  "attack": {"source": "audio/sword_swing.wav", "volume": 1.0},
+  "countdown": {"source": "audio/countdown.wav", "volume": 1.0},
+  "rupee_pickup": {"source": "audio/rupee_pickup.wav", "volume": 1.0},
+  "heart_pickup": {"source": "audio/heart_pickup.wav", "volume": 1.0},
+  "chicken_hit": {"source": "audio/cucco_hit.wav", "volume": 1.0},
+  "rupee_drop": {"source": "audio/rupee_drop.wav", "volume": 1.0},
+  "heart_drop": {"source": "audio/heart_drop.wav", "volume": 1.0},
+  "chicken_idle": {"source": "audio/cucco_idle.wav", "volume": 1.0},
+  "player_hit": {"source": "audio/player_hit.wav", "volume": 1.0},
+  "end": {"source": "audio/end_jingle.wav", "volume": 1.0}
+}

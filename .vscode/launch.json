@@ -1,0 +1,26 @@
+{
+  // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+  // Pointez pour afficher la description des attributs existants.
+  // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome with ChickenDodge",
+      "url": "http://localhost:8080/",
+      "webRoot": "${workspaceFolder}/client"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server",
+      "program": "${workspaceFolder}/server/src/server.ts",
+      "cwd": "${workspaceFolder}/server",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceFolder}/server/dist/**/*.js"
+      ]
+    }
+  ]
+}

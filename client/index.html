@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chicken Dodge</title>
+  <link rel="stylesheet" type="text/css" href="css/chickendodge.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
+  <script>
+    require.config({
+      paths: {
+        'gl-matrix': 'https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.4.1/gl-matrix'
+      }
+    });
+  </script>
+  <script src="dist/merged.js"></script>
+</head>
+
+<body id="body" style="display:none">
+  <p>
+    <a href="?locale=fr">Français</a>
+    <a href="?locale=en">Anglais</a>
+  </p>
+  <p>
+    <button class="localized" onclick="requestFullScreen();">FULL_SCREEN</button>
+    <div>
+      <span class="localized">DRAW_CALLS</span>:
+      <span id="drawCalls"></span>
+    </div>
+  </p>
+  <div id="playarea">
+    <div id="instructions">
+      <div>
+        <div>
+          <span class="localized">ARROW_KEYS</span> -
+          <span class="localized">MOVE</span>
+        </div>
+        <div>
+          <span class="localized">SPACE_KEY</span> -
+          <span class="localized">ATTACK</span>
+        </div>
+      </div>
+    </div>
+    <div id="config">
+      <p>
+        <span class="localized">ALIAS</span>:
+        <input id="player_alias" value="Anonyme" />
+      </p>
+      <p>
+        <span class="localized">SERVER</span>:
+        <input id="server" value="localhost:8080" />
+      </p>
+      <p>
+        <button class="localized" onclick="start();">PLAY</button>
+      </p>
+    </div>
+    <canvas id="canvas" width="768" height="576" style="display:none"></canvas>
+    <div id="leaderboard">
+      <div id="leaderboardTemplate" class="template">
+        <span class="name"></span> -
+        <span class="score"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let requestFullScreen;
+    let start;
+
+    require(["client/src/chickendodge", "client/src/graphicsAPI"], (game, GraphicsAPI) => {
+      requestFullScreen = GraphicsAPI.requestFullScreen;
+      start = game.start;
+      game.preload()
+        .then(() => game.init());
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Exercice #5</title>
+    </head>
+        <body>
+            <h1>Exercice #5</h1>
+<h2>Notes pour la remise</h2>
+<p>Cet exercice est dû pour le <strong>mercredi 9 décembre 2020</strong>.</p>
+<p>La remise électronique se fait via la plateforme Moodle.</p>
+<p>N'oubliez pas d'inscrire le nom de vos coéquipiers dans le fichier <code>client/data/equipe.txt</code>!</p>
+<h2>Objectif</h2>
+<p>À l’aide du projet <em>ChickenDodge</em> (version mise à jour), ajouter les fonctionnalités réseau pertinentes permettant d’afficher un tableau des meneurs (<em>leaderboard</em>).</p>
+<p>Le jeu a été modifié afin de supporter des échanges client-serveur. Les fonctionnalités de base pour l’échange de messages vous sont fournies et il est déjà possible de jouer en réseau (sous certaines réserves, voir les objectifs optionnels).</p>
+<p>La stratégie suggérée est la suivante:</p>
+<ul>
+<li>Créer un nouveau type de message pour l’envoi de score au serveur, dans le fichier <code>common/messages.ts</code></li>
+<li>Lors de la mise à jour du score du joueur, envoyer le message ci-dessus au serveur</li>
+<li>Sur le serveur, conserver la liste des scores des joueurs en modifiant le fichier <code>server.ts</code></li>
+<li>Sur réception d’un message de score par le serveur, mettre cette liste à jour. Puisqu’il s’agit d’un tableau des meneurs, on ne devrait pas mettre à jour la valeur si elle est inférieure à un score déjà connu</li>
+<li>Sur réception d’un message de score par le serveur, envoyer une mise à jour du tableau des meneurs à tous les clients actifs, en créant un nouveau type de message au besoin</li>
+<li>La méthode appropriée du composant client <em>NetworkLeaderboardComponent</em> est alors appelée afin de mettre à jour le tableau des meneurs, à droite de l’aire de jeu</li>
+<li>Lors de la connexion d’un nouveau client, lui envoyer le tableau des meneurs</li>
+</ul>
+<h2>Notes</h2>
+<p>Le code serveur est fait avec <a href="https://nodejs.org/en/">Node.js</a>. Vous devrez donc l'installer pour l'exécuter.</p>
+<p>Via l'invite de commande du système d'exploitation, naviguer dans le dossier du travail, où est situé le fichier <code>package.json</code> et exécuter la commande <code>npm install</code> pour installer les dépendances nécessaires du serveur, soit un module pour gérer les WebSockets.</p>
+<p>Pour exécuter le serveur, naviguer dans son dossier du travail et lancer le serveur par la commande <code>npm run start</code>. N'oubliez pas de relancer le serveur lorsque vous modifiez son code! Ce n'est par contre pas nécessaire de le relancer lors de modifications au client.</p>
+<h2>Objectifs optionnels</h2>
+<p>Vous constaterez que la génération des poulets et des rubis est incohérente entre les joueurs. De même, on ne transmet que les actions des joueurs. On a rapidement un comportement différent entre les diverses instances.</p>
+<p>Vos objectifs optionnels (ie.: sans points supplémentaires, uniquement pour le plaisir) consistent à:</p>
+<ul>
+<li>Transmettre la position des joueurs réseau et pas seulement leurs actions afin que les joueurs se trouvent au même endroit entre les instances</li>
+<li>Désigner un client comme &quot;maître&quot; afin de générer le comportement des poulets. Transmettre les informations concernant les poulets aux autres joueurs</li>
+<li>Ajuster les autres aspects potentiellement incohérents entre les différents joueurs</li>
+</ul>
+
+        </body>
+</html>
