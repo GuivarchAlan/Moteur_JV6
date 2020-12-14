@@ -2,6 +2,7 @@ import { vec3 } from "gl-matrix";
 import { IEntityDesc, Scene } from "../scene";
 import { ILogicComponent } from "../systems/logicSystem";
 import { Timing } from "../timing";
+import { AudioComponent } from "./audioComponent";
 import { ColliderComponent } from "./colliderComponent";
 import { Component } from "./component";
 import { PositionComponent } from "./positionComponent";
@@ -28,6 +29,8 @@ export class ChickenComponent extends Component<IChickenComponentDesc> implement
   private heartTemplate!: IEntityDesc;
   private rupeeTemplate!: IEntityDesc;
   private velocity!: vec3;
+  private audioTime!: number;
+  private randomAudio!: number;
 
   // ## Méthode *create*
   // Cette méthode est appelée pour configurer le composant avant
@@ -38,6 +41,8 @@ export class ChickenComponent extends Component<IChickenComponentDesc> implement
     this.heartAttackChance = descr.heartAttackChance;
     this.heartTemplate = descr.heartTemplate;
     this.attack = descr.attack;
+    this.audioTime = 0;
+    this.randomAudio = 2+ (Math.random() * 3);
   }
 
   // ## Méthode *setup*
@@ -60,6 +65,13 @@ export class ChickenComponent extends Component<IChickenComponentDesc> implement
   // automatiquement détruit si il a parcouru une distance trop
   // grande (il sera déjà en dehors de l'écran).
   public update(timing: Timing) {
+    // joue un son de poulet aleatoirement entre 2 et 5 secondes
+    this.audioTime += timing.dT;
+    if (this.audioTime > this.randomAudio) {
+      AudioComponent.play("chicken_idle");
+      this.audioTime = 0;
+      this.randomAudio = 2+ (Math.random() * 3);
+    }
     const position = this.owner.getComponent<PositionComponent>("Position");
     const targetDistanceSq = vec3.squaredDistance(this.target, position.local);
     const delta = vec3.create();

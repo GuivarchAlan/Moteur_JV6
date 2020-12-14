@@ -1,5 +1,6 @@
 import { ILogicComponent } from "../systems/logicSystem";
 import { Timing } from "../timing";
+import { AudioComponent } from "./audioComponent";
 import { Component } from "./component";
 import { SpriteComponent } from "./spriteComponent";
 
@@ -46,6 +47,8 @@ export class RupeeComponent extends Component<IRupeeComponentDesc> implements IL
     const sprite = this.owner.getComponent<SpriteComponent>("Sprite")!;
     sprite.spriteName = this.type;
     this.start = (new Date()).getTime();
+    //joue un son lorsqu'un coeur apparait 
+    AudioComponent.play("rupee_drop");
   }
 
   // ## Méthode *update*

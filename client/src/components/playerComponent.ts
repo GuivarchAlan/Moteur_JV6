@@ -3,6 +3,7 @@ import { EventTrigger } from "../eventTrigger";
 import { Localisation } from "../localisation";
 import { ILogicComponent } from "../systems/logicSystem";
 import { Timing } from "../timing";
+import { AudioComponent } from "./audioComponent";
 import { ChickenComponent } from "./chickenComponent";
 import { ColliderComponent, ICollisionComponent } from "./colliderComponent";
 import { Component } from "./component";
@@ -141,17 +142,25 @@ export class PlayerComponent extends Component<IPlayerComponentDesc> implements 
       this.score.value += rupee.value;
       obj.active = false;
       obj.parent!.removeChild(obj);
+      // joue un son lorsque le joueur récupère un rubis
+      AudioComponent.play("rupee_pickup");
     }
     if (heart) {
       this.life.value += heart.heal;
       obj.active = false;
       obj.parent!.removeChild(obj);
+      // joue un son lorsque le joueur récupère un coeur
+      AudioComponent.play("heart_pickup");
     }
     if (chicken) {
       if (this.isAttacking) {
         chicken.onAttack();
+        // joue un son lorsque le joueur frappe un poulet
+        AudioComponent.play("chicken_hit");
       } else {
         this.life.value -= chicken.attack;
+        // joue un son lorsque le joueur prends un coup 
+        AudioComponent.play("player_hit");
       }
     }
   }
@@ -229,6 +238,8 @@ export class PlayerComponent extends Component<IPlayerComponentDesc> implements 
       this.isAttacking = true;
       this.sprite.animationFrame = 1;
       this.sprite.frameSkip = 1;
+      // joue un son lorsque le joueur attaque
+      AudioComponent.play("attack");
     }
 
     const delta = vec3.create();
