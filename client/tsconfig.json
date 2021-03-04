@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./0/",
     "outFile":"./dist/merged.js",
     "target": "ES2017",
     "module": "amd",
@@ -9,6 +9,6 @@
   },
   "include": [
     "./src/**/*.ts",
-    "../common/**.ts"
+    "../common/**.ts", "src/app.js", "src/quadTree.ts"
   ]
 }

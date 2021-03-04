@@ -19,6 +19,14 @@ uniform float uScale;
 varying vec2 vTextureCoord;
 
 void main(void) {
-    gl_FragColor = texture2D(uSampler, vTextureCoord);
-    gl_FragColor.gb *= 0.5;
+    vec2 coord = vec2(uTime,0.5);
+    vec4 Intensity = texture2D(uIntensity, coord);
+    Intensity = Intensity * uScale;
+
+    vec2 vTextureCoordMod = vTextureCoord + sin(uTime);
+    vec4 deformation = texture2D(uDeformation,vTextureCoordMod);
+    deformation = (deformation - 0.5) * Intensity;
+    
+    vec2 res = vTextureCoord + deformation.xy;
+    gl_FragColor = texture2D(uSampler, res);
 }

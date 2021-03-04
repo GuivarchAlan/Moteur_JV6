@@ -1,4 +1,5 @@
-import { NetworkMessage /* etc. */ } from "../../../common/messages";
+import { NetworkLeaderBoard, NetworkMessage, /* etc. */ 
+NetworkScore} from "../../../common/messages";
 import { Component } from "./component";
 import { NetworkingComponent } from "./networkingComponent";
 
@@ -42,27 +43,38 @@ export class NetworkLeaderboardComponent extends Component<INetLeaderboardDesc> 
     this.template = document.getElementById(descr.template)!;
 
     this.networking.messageEvent.add(this, this.onMessage);
-
-    // # TODO: À enlever lorsque l'implémentation est complète
-    this.debugStartTest("Test 1", 1234, 0.2);
-    this.debugStartTest("Test 2", 750, 0.4);
   }
 
   // ## Méthode *onMessage*
   // Cette méthode est déclenchée quand un message réseau est reçu
   private onMessage(msg: NetworkMessage) {
-    // # TODO: Implémenter le fonctionnement
-  }
-
-  // ## Méthode *debugStartTest*
-  // Cette méthode met à jour un score fictif afin de valider le
-  // fonctionnement du système. À effacer lorsque l'implémentation
-  // est complète.
-  private debugStartTest(name: string, score: number, freq: number) {
-    setInterval(() => {
-      this.setScore(name, score);
-      score += 250;
-    }, 1000.0 / freq);
+    if (!(msg instanceof NetworkLeaderBoard)) {
+      return;
+    }
+    if (msg.toremove !== "") {
+      var isInScore = false;
+      // verifie si le joueur se trouve déja dans leaderboard si non on retire le plus petit score
+      for (const pName in this.scores) {
+        if (pName == msg.name) {
+          isInScore = true;
+        }
+      }
+      if(!isInScore) {
+        var newscore : IScoreMap = {};
+        for (const pName in this.scores) {
+          if (pName != msg.toremove) {
+            newscore[pName] = {
+              node: this.scores[pName].node,
+              scoreNode: this.scores[pName].scoreNode,
+              value: this.scores[pName].value,
+            };
+          }
+        }
+        this.scores = newscore;
+      }
+    }
+    // ajoute le score au leaderboard des joueurs
+    this.setScore(msg.name,msg.score);
   }
 
   // ## Méthode *setScore*

@@ -79,6 +79,33 @@ export class Localisation {
     // ***TODO***: Implémenter la substitution de clés
     console.log("queryContext: ", queryContext);
 
+    /*
+    remplace les elements "{key}" de localeStrings par leur valeur dans queryContext
+    */ 
+    var keys = Object.keys(localeStrings);
+    for(var index in keys){
+       var k = keys[index];
+       var elem = localeStrings[k];
+       var i = elem.indexOf("{");
+       while(i != -1) {
+          var j = elem.indexOf("}");
+          if (j < i) {
+             break;
+          }
+          /*
+          Remplace seulement si on sait par quoi le remplacer.
+          */
+          if(queryContext[elem.substring(i+1,j)]) {
+            elem = elem.replace(elem.substring(i,j+1),queryContext[elem.substring(i+1,j)]);
+          }
+          else {
+            break;
+          }
+          var i = elem.indexOf("{");
+       }
+       localeStrings[k] = elem;
+    }
+
     return localeStrings[key];
   }
 

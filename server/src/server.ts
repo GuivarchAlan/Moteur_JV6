@@ -1,5 +1,7 @@
 import * as path from "path";
+import { stringify } from "querystring";
 import * as Messages from "../../common/messages";
+import { NetworkLeaderBoard } from "../../common/messages";
 import { FileProvider } from "./fileprovider";
 import { HttpServer } from "./httpserver";
 import { Deserializer, Serializer } from "./serializer";
@@ -17,6 +19,11 @@ interface ISocketData {
   name?: string;
 }
 
+interface ILeaderBoard {
+  name: string;
+  score: number;
+}
+
 const socketData = new Map<Socket, ISocketData>();
 function getSocketData(socket: Socket): ISocketData {
   let data = socketData.get(socket);
@@ -29,6 +36,9 @@ function getSocketData(socket: Socket): ISocketData {
 
 const pendingPlayers = new Set<Socket>();
 
+const leaderBoard : Map<number,ILeaderBoard> = new Map<number,ILeaderBoard>();
+
+var minLeaderBoard :number = 0;
 // Cette méthode permet d'envoyer un message à un client.
 // Elle s'occupe d'exécuter la sérialisation et l'envoi
 // en binaire sur le réseau.
@@ -42,35 +52,84 @@ function sendMessage(socket: Socket, message: Messages.NetworkMessage) {
 // binaires est reçu. On y décode alors le message qui y
 // est stocké, et on exécute le traitement pertinent en
 // réaction à ce message.
-function processData(socket: Socket, data: Buffer) {
+function processData(socket: Socket, data: Buffer, id: number) {
   const deserializer = new Deserializer(data);
   const message = Messages.NetworkMessage.create(deserializer);
-  onMessage(socket, message);
+  onMessage(socket, message, id);
 }
 
 // Lorsqu'un message est reçu, cette méthode est appelée
 // et, selon le message reçu, une action est exécutée.
-function onMessage(socket: Socket, message: Messages.NetworkMessage | null) {
+function onMessage(socket: Socket, message: Messages.NetworkMessage | null, id: number) {
+  
   if (message instanceof Messages.NetworkLogin) {
-    onNetworkLogin(socket, message);
+    onNetworkLogin(socket, message, id);
   }
   if (message instanceof Messages.NetworkInputChanged) {
     sendMessage(getSocketData(socket).otherPlayer!, message);
+  }
+  if (message instanceof Messages.NetworkScore) {
+    updateLeaderBoard(socket,message,id);
+  }
+}
+// permet de mettre à jour le LeaderBoard si nécessaire
+function updateLeaderBoard(socket: Socket, message: Messages.NetworkScore, id: number) {
+  var toChange = false;
+  var toRemove = "";
+  if (leaderBoard.size < 3) {
+    leaderBoard.set(id, {name : message.name,score : message.score});
+    minLeaderBoard = message.score;
+    // mettre à jour le plus petit score
+    leaderBoard.forEach((value) => {
+      if (value.score < minLeaderBoard) {
+        minLeaderBoard = value.score;
+      }
+      toChange = true;
+    });
+  }
+  else if(message.score > minLeaderBoard){
+    //remplacer le plus petit score et l'envoyer aux joueurs
+    leaderBoard.forEach((value,key) => {
+      if (value.score == minLeaderBoard && !toChange) {
+        toRemove = value.name;
+        leaderBoard.delete(key);
+        leaderBoard.set(id, {name : message.name,score : message.score});
+        toChange = true;
+      }
+    });
+    // mettre à jour le plus petit score 
+    minLeaderBoard = message.score;
+    leaderBoard.forEach((value) => {
+      if (value.score < minLeaderBoard) {
+        minLeaderBoard = value.score;
+      }
+      toChange = true;
+    });
+  }
+  if (toChange) {
+    // si un changement est fait sur le leaderBoard envoie des scores à modifier aux joueurs
+    const msg = new NetworkLeaderBoard();
+    msg.build({name: message.name, score: message.score, toremove: toRemove})
+    socketData.forEach((sockData, sock) => {
+      sendMessage(sock,msg);
+      console.log("score envoyé à " + sockData.name);
+  });
   }
 }
 
 // Quand un joueur établit sa connection, il envoie un
 // message l'identifiant.
-function onNetworkLogin(socket: Socket, message: Messages.NetworkLogin) {
+function onNetworkLogin(socket: Socket, message: Messages.NetworkLogin, id: number) {
   getSocketData(socket).name = message.name;
 
   // Si aucun joueur n'est en attente, on place le nouveau
   // joueur en attente.
+
   if (pendingPlayers.size === 0) {
     pendingPlayers.add(socket);
     return;
   }
-
+  
   // Si il y a des joueurs en attente, on associe un de
   // ces joueurs à celui-ci.
   const pendingArray = Array.from(pendingPlayers);
@@ -81,6 +140,19 @@ function onNetworkLogin(socket: Socket, message: Messages.NetworkLogin) {
   const otherData = getSocketData(otherPlayer);
   data.otherPlayer = otherPlayer;
   otherData.otherPlayer = socket;
+
+  // envoie du leaderBoard aux nouveaux joueurs
+
+  if (leaderBoard.size > 0) {
+    leaderBoard.forEach((value,key) => {
+      const msg = new NetworkLeaderBoard();
+      msg.build({name: value.name, score: value.score, toremove: ""});
+      sendMessage(socket,msg);
+      sendMessage(otherPlayer,msg);
+    });
+  }
+
+
 
   // On envoie alors la liste des joueurs de la partie
   // à chacun des participants.
@@ -104,7 +176,7 @@ ws.onConnection = (id) => {
 
 ws.onMessage = (id, socket, data) => {
   console.log("Message de " + id);
-  processData(socket, data);
+  processData(socket, data, id);
 };
 
 ws.onClose = (id, socket) => {
