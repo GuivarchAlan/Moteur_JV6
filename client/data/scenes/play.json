@@ -287,7 +287,9 @@
                 "z": 0
               },
               "Score": {
-                "scoreSprite": "GreenScoreSprite.TextSprite"
+                "scoreSprite": "GreenScoreSprite.TextSprite",
+                "networking": "Server.Networking",
+                "player":"Green.Player"
               },
               "Life": {
                 "max": 3,
@@ -365,7 +367,9 @@
                 "z": 0
               },
               "Score": {
-                "scoreSprite": "RedScoreSprite.TextSprite"
+                "scoreSprite": "RedScoreSprite.TextSprite",
+                "networking": "Server.Networking",
+                "player":"Red.Player"
               },
               "Life": {
                 "max": 3,
